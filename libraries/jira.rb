@@ -144,6 +144,11 @@ module Jira
           'x64' => 'b0b67b77c6c1d96f4225ab3c22f31496f356491538db1ee143eca0a58de07f78',
           'tar' => '6e72f3820b279ec539e5c12ebabed13bb239f49ba38bb2e70a40d36cb2a7d68f'
         },
+        '6.2.5' => {
+          'x32' => 'b1fe69de15083b4146f05c1433e349c8824a520cf81ca2acbd92ce3de155c00f',
+          'x64' => '15f567d86cd11acc7896bf25c41e1fdfb7aa0f7be6c44b0f7b362b2fb00a1f38',
+          'tar' => 'fd6a836fda8efd9a54374c38063ff3db3f479f4b8c5b0ef0acd4faba07513b4c'
+        },
         '6.3.15' => {
           'x32' => '739ac3864951b06a4ce910826f5175523b4ab9eae5005770cbcb774cc94e2e29',
           'x64' => 'a334865dd0b5df5b3bcc506b5c40ab7b65700e310edb6e7e6f86d30c3a8e3375',
