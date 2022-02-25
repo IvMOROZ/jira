@@ -5,38 +5,43 @@ module Jira
   module Helpers
     # TODO: fix AbcSize
     # rubocop:disable Metrics/AbcSize
-    class Jira
-      def self.settings(node)
-        begin
-          if Chef::Config[:solo]
-            begin
-              settings = Chef::DataBagItem.load('jira', 'jira')['local']
-            rescue
-              Chef::Log.info('No jira data bag found')
-            end
-          else
-            begin
-              settings = Chef::EncryptedDataBagItem.load('jira', 'jira')[node.chef_environment]
-            rescue
-              Chef::Log.info('No jira encrypted data bag found')
-            end
-          end
-        ensure
-          settings ||= node['jira'].to_hash
+    # Merges JIRA settings from data bag and node attributes.
+# Data dag settings always has a higher priority.
+#
+# @return [Hash] Settings hash
+         def merge_jira_settings
+           @settings_from_data_bag ||= settings_from_data_bag
+           settings = Chef::Mixin::DeepMerge.deep_merge(
+             @settings_from_data_bag,
+             node['jira'].to_hash
+           )
 
-          case settings['database']['type']
-          when 'mysql'
-            settings['database']['port'] ||= 3306
-          when 'postgresql'
-            settings['database']['port'] ||= 5432
-          else
-            warn 'Unsupported database type! - Use a supported type or handle DB creation/config in a wrapper cookbook!'
-          end
-        end
+           case settings['database']['type']
+           when 'mysql'
+             settings['database']['port'] ||= 3306
+           when 'postgresql'
+             settings['database']['port'] ||= 5432
+           else
+             warn 'Unsupported database type! - Use a supported type or handle DB creation/config in a wrapper cookbook!'
+           end
 
-        settings
-      end
-    end
+           settings
+       end
+
+       # Fetchs Confluence settings from the data bag
+       #
+       # @return [Hash] Settings hash
+       def settings_from_data_bag
+         begin
+           bag = node['jira']['data_bag_name']
+           item = node['jira']['data_bag_item']
+           result = data_bag_item(bag, item)['jira']
+           return result if result.is_a?(Hash)
+         rescue
+           Chef::Log.info("Couldn't load data bag item #{bag}/#{item}")
+         end
+         {}
+       end
     # rubocop:enable Metrics/AbcSize
 
     # Detects the current JIRA version.
@@ -73,7 +78,7 @@ module Jira
       else
         case node['jira']['flavor']
         when 'software'
-          product = "#{base_url}/atlassian-jira-#{node['jira']['flavor']}-#{version}-jira-#{version}"
+          product = "#{base_url}/atlassian-jira-#{node['jira']['flavor']}-#{version}"
         when 'core'
           product = "#{base_url}/atlassian-jira-#{node['jira']['flavor']}-#{version}"
         end
@@ -263,6 +268,16 @@ module Jira
             'x32' => '98d41db73b342c95a08fec233ddfb5da928875366e1cfea941be7f95bf0cf126',
             'x64' => '02d5d3adecc4d218ff258ad69ac39390678434359638d1785e78562178f39408',
             'tar' => 'f03f2a8dd42c4b5f03918b326f14d7339f16f60fee0fa4a4d9c2e04c82dbbed2'
+          }
+        },
+        '8.11.1' => {
+          'core' => {
+            'x64' => '146cc1b42d2b6ea0f182a74872bc4736a254186602c70f6ba08be5a1a8edc992',
+            'tar' => '197a056ff449fcc794bd56db915acb5f32aa1f19dfa2c79334cc9e4853224e37'
+           },
+          'software' => {
+            'x64' => '184193d80ef4748d8adbffeb8255858f0dfeade65dea9f4fe9568308b34cf083',
+            'tar' => 'e73ddf61f15738d70271c50e17bb7206c8ccbca2b265ee2d59aaa8554ee4a85b'
           }
         }
       }

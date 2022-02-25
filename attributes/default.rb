@@ -1,12 +1,14 @@
 default['jira']['home_path']          = '/var/atlassian/application-data/jira'
 default['jira']['install_path']       = '/opt/atlassian/jira'
 default['jira']['install_type']       = 'installer'
-default['jira']['version']            = '7.1.7'
+default['jira']['version']            = '8.11.1'
 default['jira']['flavor']             = 'software'
 default['jira']['user']               = 'jira'
 default['jira']['group']              = 'jira'
 default['jira']['backup_when_update'] = false
 default['jira']['ssl']                = false
+default['init_package'] = 'systemd'
+
 
 # Types include: 'mixed', 'dedicated', 'shared'
 # 'mixed'     - JIRA and DB run on the same system
@@ -22,6 +24,10 @@ default['jira']['autotune']['type']    = 'mixed'
 # Defaults are automatically selected from version via helper functions
 default['jira']['url']      = nil
 default['jira']['checksum'] = nil
+
+# Data bag where credentials and other sensitive data could be stored (optional)
+default['jira']['data_bag_name'] = 'jira'
+default['jira']['data_bag_item'] = 'jira'
 
 default['jira']['apache2']['template_cookbook']  = 'jira'
 default['jira']['apache2']['access_log']         = ''
@@ -88,3 +94,15 @@ default['jira']['crowd_sso']['enabled']        = false
 default['jira']['crowd_sso']['sso_appname']    = 'jira'
 default['jira']['crowd_sso']['sso_password']   = 'changethistosomethingsensible'
 default['jira']['crowd_sso']['crowd_base_url'] = 'http://localhost:8095/crowd/'
+
+default['postgresql']['pg_gem']['version'] = '0.21.0'
+
+default['java']['jdk_version'] = '8'
+default['java']['install_flavor'] = 'oracle'
+default['java']['jdk']['8']['x86_64']['url'] = 'http://distrib.prls.net/linux/jdk-8u202-linux-x64.tar.gz'
+default['java']['jdk']['8']['x86_64']['checksum'] = '9a5c32411a6a06e22b69c495b7975034409fa1652d03aeb8eb5b6f59fd4594e0'
+default['java']['oracle']['accept_oracle_download_terms'] = true
+
+#default['postgresql']['version'] = '12.4'
+#default['postgresql']['enable_pgdg_yum'] = true
+#default['postgresql']['pgdg']['repo_rpm_url']['12']['centos']['7']['x86_64'] = 'https://download.postgresql.org/pub/repos/yum/12/redhat/rhel-7.8-x86_64/postgresql12-12.4-1PGDG.rhel7.x86_64.rpm'

@@ -1,13 +1,14 @@
 ---
 driver:
   name: vagrant
+  provider: parallels
   customize:
-    memory: 1024
+    memsize: 4096
+    cpus: 2
 
 provisioner:
   name: chef_zero
-  client_rb:
-    diff_disabled: true
+  require_chef_omnibus: 12
 
 platforms:
 - name: centos-6
@@ -20,10 +21,7 @@ platforms:
         virtual_host_name: localhost
         virtual_host_alias: localhost
 
-- name: centos-7
-  driver_config:
-    box: bento/centos-7.1 # vagrant
-    image: centos-7-1-x64 # digitalocean
+- name: centos-7.8
   attributes:
     jira:
       apache2:
